@@ -21,11 +21,11 @@ Hardware co plánuji použít:
 
 Zdroje a návody, kterými se inspiruji:
 (budu postupně doplňovat)
-
-ESP32 web server - https://www.youtube.com/watch?v=ApGwxX6VVzk
-lcd displej - https://navody.arduino-shop.cz/zaciname-s-arduinem/lcd-displej.html
-měřič vzdálenosti - https://navody.arduino-shop.cz/navody-k-produktum/ultrazvukovy-meric-vzdalenosti-hy-srf05.html
-web server - https://randomnerdtutorials.com/esp32-web-server-spiffs-spi-flash-file-system/
+</br>
+ESP32 web server - https://www.youtube.com/watch?v=ApGwxX6VVzk</br>
+lcd displej - https://navody.arduino-shop.cz/zaciname-s-arduinem/lcd-displej.html</br>
+měřič vzdálenosti - https://navody.arduino-shop.cz/navody-k-produktum/ultrazvukovy-meric-vzdalenosti-hy-srf05.html</br>
+web server - https://randomnerdtutorials.com/esp32-web-server-spiffs-spi-flash-file-system/</br>
 
 
 

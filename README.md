@@ -31,6 +31,7 @@ web server - https://randomnerdtutorials.com/esp32-web-server-spiffs-spi-flash-f
 
 AsyncWebServerRequest <br>
 platformio run --uploadfs <br>
+sudo chmod -R 777 /dev/ttyUSB0 <br>
 
 
 

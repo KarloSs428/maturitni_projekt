@@ -2,12 +2,30 @@
 #include "WiFi.h" 
 #include "ESPAsyncWebServer.h" 
 #include "SPIFFS.h"
+#include "Keypad.h"
 
 //const char* ssid = "SitePark.cz-Demel_AP";
 //const char* password = "26894065";
 
 const char* ssid = "SSPUOpava";
 const char* password = "";
+
+//////////////klavesnice////////////////////
+const byte radky = 4;
+const byte sloupce = 4;
+
+char keys[radky][sloupce] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
+
+byte pinyRadku[radky] = {13, 12, 14, 27};
+byte pinySloupcu[sloupce] = {26, 25, 33, 32};
+
+Keypad klavesnice = Keypad( makeKeymap(keys), pinyRadku, pinySloupcu, radky, sloupce);
+//////////////////////////////////////////////////////
 
 // Set LED GPIO - tohle by mela byt ledka na esp32
 const int ledPin = 2;
@@ -36,7 +54,7 @@ String processor(const String& var){
 void setup(){
   // Serial port for debugging purposes
   Serial.begin(115200);
-  pinMode(ledPin, OUTPUT);
+  /*pinMode(ledPin, OUTPUT);
 
   // Initialize SPIFFS
   if(!SPIFFS.begin(true)){
@@ -77,9 +95,13 @@ void setup(){
   });
 
   // Start server
-  server.begin();
+  server.begin();*/
 }
  
 void loop(){
-  
+
+  char klavesa = klavesnice.getKey();
+  if (klavesa){
+    Serial.print(klavesa);
+  }
 }

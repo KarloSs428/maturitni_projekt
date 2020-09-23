@@ -3,27 +3,27 @@
 
 1) vybrat si projekt | splněno
 2) vybrat součástky | splněno
-3) objednat součástky | čekám
+3) objednat součástky | splněno
 
 
 
 2. období
 (hardwarová část)
 
-1) zkontrolovat funkčnost všech součástek
-2) složit všechno dohromady na nepájivém poli(neměl by být problém, součástek není moc)
+1) zkontrolovat funkčnost všech součástek | splněno
+2) složit všechno dohromady na nepájivém poli(neměl by být problém, součástek není moc) | splněno
 
 
 
 3. období
 (softwarová část)
 
-1) zprovoznit platformio a samotné ESP32
+1) zprovoznit platformio a samotné ESP32 | splněno
 2) zprovoznit senzor, který bude hlídat pohyb, propojit ho s bzučákem a LED diodou
 3) zprovoznit LCD displej
 4) zprovoznit klávesnici, aby se dal na LCD displeji napsat čtyřmístný pin
-5) ESP bude schopné se připojit k síti wifi, kterou mám doma
-6) zprovoznit web server, udělat tomu pěkný vzhled
+5) ESP bude schopné se připojit k síti wifi, kterou mám doma | splněno
+6) zprovoznit web server, udělat tomu pěkný vzhled | splněno
 7) do webové aplikace se bude možno přihlásit přes jméno a heslo(defaultně admin, admin)
 8) jméno i heslo půjdou změnit
 9) zařídit, aby kdykoliv se aktivujue alarm, ve webové aplikaci vyskočí oznámení

@@ -3,12 +3,17 @@
 #include "ESPAsyncWebServer.h" 
 #include "SPIFFS.h"
 #include "Keypad.h"
+#include "LiquidCrystal_I2C.h"
+#include "Wire.h"
 
-//const char* ssid = "SitePark.cz-Demel_AP";
-//const char* password = "26894065";
+const char* ssid = "SitePark.cz-Demel_AP";
+const char* password = "26894065";
 
-const char* ssid = "SSPUOpava";
-const char* password = "";
+const char* http_username = "admin";
+const char* http_password = "admin";
+
+const char* PARAM_INPUT_1 = "state";
+
 
 //////////////klavesnice////////////////////
 const byte radky = 4;
@@ -22,7 +27,7 @@ char keys[radky][sloupce] = {
 };
 
 byte pinyRadku[radky] = {13, 12, 14, 27};
-byte pinySloupcu[sloupce] = {26, 25, 33, 32};
+byte pinySloupcu[sloupce] = {16, 17, 25, 26};
 
 Keypad klavesnice = Keypad( makeKeymap(keys), pinyRadku, pinySloupcu, radky, sloupce);
 //////////////////////////////////////////////////////
@@ -33,7 +38,7 @@ const int ledPin = 2;
 String ledState;
 
 // Create AsyncWebServer object on port 80
-AsyncWebServer server(80);
+//////////////////////////////////////////////////AsyncWebServer server(80);
 
 // Replaces placeholder with LED state value
 String processor(const String& var){
@@ -54,8 +59,8 @@ String processor(const String& var){
 void setup(){
   // Serial port for debugging purposes
   Serial.begin(115200);
-  /*pinMode(ledPin, OUTPUT);
-
+  pinMode(ledPin, OUTPUT);
+/*
   // Initialize SPIFFS
   if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
@@ -97,9 +102,9 @@ void setup(){
   // Start server
   server.begin();*/
 }
- 
-void loop(){
 
+
+void loop(){
   char klavesa = klavesnice.getKey();
   if (klavesa){
     Serial.print(klavesa);

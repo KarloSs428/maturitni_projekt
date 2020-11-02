@@ -6,10 +6,33 @@
   <link rel="icon" href="data:,">
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body>
-  <h1>ESP32 Web Server</h1>
-  <p>GPIO state: <strong> %STATE%</strong></p>
-  <p><a href="/on"><button class="button">ON</button></a></p>
-  <p><a href="/off"><button class="button button2">OFF</button></a></p>
-</body>
+
+<script>
+  function toggleCheckbox(element) {
+  var xhr = new XMLHttpRequest();
+  if(element.checked){ 
+    xhr.open("GET", "/update?state=1", true); 
+    document.getElementById("state").innerHTML = "ON";  
+  }
+  else { 
+    xhr.open("GET", "/update?state=0", true); 
+    document.getElementById("state").innerHTML = "OFF";      
+  }
+  xhr.send();
+}
+function logoutButton() {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/logout", true);
+  xhr.send();
+  setTimeout(function(){ window.open("/logged-out","_self"); }, 1000);
+}
+</script>
+
+  <body>
+    <h1>ESP32 Web Server</h1>
+    <p>GPIO state: <strong> %STATE%</strong></p>
+    <p><a href="/on"><button class="button">ON</button></a></p>
+    <p><a href="/off"><button class="button button2">OFF</button></a></p>
+  </body>
+
 </html>

@@ -15,6 +15,12 @@ const char* http_password = "admin";
 const char* PARAM_INPUT_1 = "state";
 
 
+const int cidloPin = 26;
+const int ledPin = 2;
+
+/////////////displej///////////
+LiquidCrystal_I2C lcd(27, 16, 2);  
+
 //////////////klavesnice////////////////////
 const byte radky = 4;
 const byte sloupce = 4;
@@ -27,18 +33,16 @@ char keys[radky][sloupce] = {
 };
 
 byte pinyRadku[radky] = {13, 12, 14, 27};
-byte pinySloupcu[sloupce] = {16, 17, 25, 26};
+byte pinySloupcu[sloupce] = {16, 17, 25};
 
 Keypad klavesnice = Keypad( makeKeymap(keys), pinyRadku, pinySloupcu, radky, sloupce);
 //////////////////////////////////////////////////////
 
-// Set LED GPIO - tohle by mela byt ledka na esp32
-const int ledPin = 2;
 // Stores LED state
 String ledState;
 
 // Create AsyncWebServer object on port 80
-//////////////////////////////////////////////////AsyncWebServer server(80);
+//AsyncWebServer server(80);
 
 // Replaces placeholder with LED state value
 String processor(const String& var){
@@ -55,12 +59,22 @@ String processor(const String& var){
   }
   return String();
 }
+
  
 void setup(){
-  // Serial port for debugging purposes
   Serial.begin(115200);
+  Wire.begin();
+
   pinMode(ledPin, OUTPUT);
-/*
+  pinMode(cidloPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+
+  lcd.init();
+  lcd.backlight();
+
+  //attachInterrupt(0, detekce, RISING);
+
+
   // Initialize SPIFFS
   if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
@@ -99,8 +113,30 @@ void setup(){
     request->send(SPIFFS, "/index.html", String(), false, processor);
   });
 
-  // Start server
-  server.begin();*/
+  server.begin();
+}
+
+void mereniCasuOdSpusteni(){
+  Serial.print("Cas od zapnuti: ");
+  Serial.print(millis()/1000);
+  Serial.println(" vterin.");
+  delay(1000);
+}
+
+int detekcePohybu(int pinCidlo, int pinLed){
+  int pohyb = digitalRead(pinCidlo);
+  if(pohyb){
+    Serial.println("Pohyb detekovan!");
+    digitalWrite(pinLed, HIGH);
+  }else{
+    Serial.println("Nic nebylo detekovano."); 
+    digitalWrite(pinLed, LOW);
+  }
+}
+
+//fuknce detekce, ktera se spusti pomoci preruseni
+void detekce() {
+  Serial.println("Detekce pohybu!!!");
 }
 
 
@@ -109,4 +145,10 @@ void loop(){
   if (klavesa){
     Serial.print(klavesa);
   }
+  mereniCasuOdSpusteni();
+  detekcePohybu(cidloPin, ledPin);
+
+  lcd.setCursor(0, 0);
+  lcd.print("Hello, World!");
+
 }

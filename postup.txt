@@ -21,7 +21,7 @@
 1) zprovoznit platformio a samotné ESP32 | splněno
 2) zprovoznit senzor, který bude hlídat pohyb, propojit ho s bzučákem a LED diodou
 3) zprovoznit LCD displej
-4) zprovoznit klávesnici, aby se dal na LCD displeji napsat čtyřmístný pin
+4) zprovoznit klávesnici, aby se dal na LCD displeji napsat čtyřmístný pin  | splněno
 5) ESP bude schopné se připojit k síti wifi, kterou mám doma | splněno
 6) zprovoznit web server, udělat tomu pěkný vzhled | splněno
 7) do webové aplikace se bude možno přihlásit přes jméno a heslo(defaultně admin, admin)

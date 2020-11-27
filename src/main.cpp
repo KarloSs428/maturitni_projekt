@@ -18,8 +18,9 @@ const char* PARAM_INPUT_1 = "state";
 const int cidloPin = 26;
 const int ledPin = 2;
 
+long int DebounceTimer;
+int detekovano = false;
 /////////////displej///////////
-LiquidCrystal_I2C lcd(27, 16, 2);  
 
 //////////////klavesnice////////////////////
 const byte radky = 4;
@@ -60,23 +61,24 @@ String processor(const String& var){
   return String();
 }
 
+//fuknce detekce, ktera se spusti pomoci preruseni
+void IRAM_ATTR detekce() {
+  detekovano = true;
+}
  
 void setup(){
   Serial.begin(115200);
   Wire.begin();
 
   pinMode(ledPin, OUTPUT);
-  pinMode(cidloPin, INPUT);
+  pinMode(cidloPin, INPUT_PULLDOWN);
   pinMode(ledPin, OUTPUT);
 
-  lcd.init();
-  lcd.backlight();
-
-  //attachInterrupt(0, detekce, RISING);
+  attachInterrupt(cidloPin, detekce, RISING);
 
 
   // Initialize SPIFFS
-  if(!SPIFFS.begin(true)){
+  /*if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
@@ -113,7 +115,7 @@ void setup(){
     request->send(SPIFFS, "/index.html", String(), false, processor);
   });
 
-  server.begin();
+  server.begin();*/
 }
 
 void mereniCasuOdSpusteni(){
@@ -134,21 +136,24 @@ int detekcePohybu(int pinCidlo, int pinLed){
   }
 }
 
-//fuknce detekce, ktera se spusti pomoci preruseni
-void detekce() {
-  Serial.println("Detekce pohybu!!!");
-}
-
 
 void loop(){
   char klavesa = klavesnice.getKey();
   if (klavesa){
     Serial.print(klavesa);
   }
-  mereniCasuOdSpusteni();
-  detekcePohybu(cidloPin, ledPin);
+  //mereniCasuOdSpusteni();
+  //detekcePohybu(cidloPin, ledPin);
 
-  lcd.setCursor(0, 0);
-  lcd.print("Hello, World!");
-
+  if(detekovano){
+    Serial.println("Pohyb byl detekovan!!!!");
+    digitalWrite(ledPin, HIGH);
+    detekovano = false;
+    DebounceTimer = millis();
+    
+      
+  }
+  if ( millis() - 5000 >= DebounceTimer ) {
+    digitalWrite(ledPin, LOW);
+  }
 }

@@ -32,6 +32,7 @@ web server - https://randomnerdtutorials.com/esp32-web-server-spiffs-spi-flash-f
 AsyncWebServerRequest <br>
 platformio run --uploadfs <br>
 sudo chmod -R 777 /dev/ttyUSB0 <br>
+esptool.py --chip esp32-s2 --port /dev/ttyUSB0 --baud 961200  write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x10000 .pio/build/esp-wrover-kit/firmware.bin  0x8000 .pio/build/esp-wrover-kit/partitions.bin <br>
 
 
 

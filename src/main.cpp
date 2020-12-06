@@ -9,13 +9,9 @@
 const char* ssid = "SitePark.cz-Demel_AP";
 const char* password = "26894065";
 
-const char* http_username = "admin";
-const char* http_password = "admin";
-
 const char* PARAM_INPUT_1 = "state";
 
-
-const int cidloPin = 26;
+const int cidloPin = 13;
 const int ledPin = 2;
 
 long int DebounceTimer;
@@ -33,8 +29,8 @@ char keys[radky][sloupce] = {
   {'*','0','#','D'}
 };
 
-byte pinyRadku[radky] = {13, 12, 14, 27};
-byte pinySloupcu[sloupce] = {16, 17, 25};
+byte pinyRadku[radky] = {12, 14, 27, 26};
+byte pinySloupcu[sloupce] = {25, 33, 32};
 
 Keypad klavesnice = Keypad( makeKeymap(keys), pinyRadku, pinySloupcu, radky, sloupce);
 //////////////////////////////////////////////////////
@@ -82,17 +78,14 @@ void setup(){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
-
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
   }
-
   // Print ESP32 Local IP Address
   Serial.println(WiFi.localIP());
-
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", String(), false, processor);
@@ -102,7 +95,6 @@ void setup(){
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/style.css", "text/css");
   });
-
   // Route to set GPIO to HIGH
   server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request){
     digitalWrite(ledPin, HIGH);    
@@ -114,7 +106,6 @@ void setup(){
     digitalWrite(ledPin, LOW);    
     request->send(SPIFFS, "/index.html", String(), false, processor);
   });
-
   server.begin();*/
 }
 
@@ -127,33 +118,33 @@ void mereniCasuOdSpusteni(){
 
 int detekcePohybu(int pinCidlo, int pinLed){
   int pohyb = digitalRead(pinCidlo);
+  int truOrFals;
   if(pohyb){
-    Serial.println("Pohyb detekovan!");
+    //Serial.println("Pohyb detekovan!");
     digitalWrite(pinLed, HIGH);
+    truOrFals = true;
+    return truOrFals;
   }else{
-    Serial.println("Nic nebylo detekovano."); 
+    //Serial.println("Nic nebylo detekovano."); 
     digitalWrite(pinLed, LOW);
+    truOrFals = false;
+    return truOrFals;
   }
 }
 
 
 void loop(){
-  char klavesa = klavesnice.getKey();
-  if (klavesa){
-    Serial.print(klavesa);
-  }
   //mereniCasuOdSpusteni();
-  //detekcePohybu(cidloPin, ledPin);
-
-  if(detekovano){
-    Serial.println("Pohyb byl detekovan!!!!");
-    digitalWrite(ledPin, HIGH);
-    detekovano = false;
-    DebounceTimer = millis();
-    
-      
-  }
-  if ( millis() - 5000 >= DebounceTimer ) {
-    digitalWrite(ledPin, LOW);
+  int a;
+  if(detekcePohybu(cidloPin, ledPin) == true){
+    Serial.println("pohyb detekovan");
+    delay(1000);
+    a = 1;
+    if (a == 1 && klavesnice.getKey() == '#'){
+      digitalWrite(ledPin, LOW);
+    }
+  }else{
+    Serial.println("pohyb nebyl detekovan");
+    a = 0;
   }
 }

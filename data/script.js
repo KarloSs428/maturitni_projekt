@@ -36,6 +36,7 @@ let casy = [];
 const pridejCas = (ev) => {
     ev.preventDefault();  //to stop the form submitting
     let cas = {
+        den: document.getElementById('den').value,
         cas1: document.getElementById('cas1').value,
         cas2: document.getElementById('cas2').value
     }

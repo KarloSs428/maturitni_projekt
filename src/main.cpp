@@ -6,8 +6,11 @@
 #include "LiquidCrystal_I2C.h"
 #include "Wire.h"
 
-const char* ssid = "SitePark.cz-Demel_AP";
-const char* password = "26894065";
+//const char* ssid = "SitePark.cz-Demel_AP";
+//const char* password = "26894065";
+
+const char* ssid = "SSPUOpava";
+const char* password = "";
 
 const char* PARAM_INPUT_1 = "state";
 
@@ -39,7 +42,7 @@ Keypad klavesnice = Keypad( makeKeymap(keys), pinyRadku, pinySloupcu, radky, slo
 String ledState;
 
 // Create AsyncWebServer object on port 80
-//AsyncWebServer server(80);
+AsyncWebServer server(80);
 
 // Replaces placeholder with LED state value
 String processor(const String& var){
@@ -74,7 +77,7 @@ void setup(){
 
 
   // Initialize SPIFFS
-  /*if(!SPIFFS.begin(true)){
+  if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
@@ -95,6 +98,10 @@ void setup(){
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/style.css", "text/css");
   });
+  //javascript
+  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/script.js", "text/css");
+  });
   // Route to set GPIO to HIGH
   server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request){
     digitalWrite(ledPin, HIGH);    
@@ -106,7 +113,7 @@ void setup(){
     digitalWrite(ledPin, LOW);    
     request->send(SPIFFS, "/index.html", String(), false, processor);
   });
-  server.begin();*/
+  server.begin();
 }
 
 void mereniCasuOdSpusteni(){
@@ -135,7 +142,7 @@ int detekcePohybu(int pinCidlo, int pinLed){
 
 void loop(){
   //mereniCasuOdSpusteni();
-  int a;
+  /*int a;
   if(detekcePohybu(cidloPin, ledPin) == true){
     Serial.println("pohyb detekovan");
     delay(1000);
@@ -146,5 +153,5 @@ void loop(){
   }else{
     Serial.println("pohyb nebyl detekovan");
     a = 0;
-  }
+  }*/
 }

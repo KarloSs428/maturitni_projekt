@@ -6,6 +6,8 @@
 #include "LiquidCrystal_I2C.h"
 #include "Wire.h"
 
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 //const char* ssid = "SitePark.cz-Demel_AP";
 //const char* password = "26894065";
 
@@ -20,6 +22,9 @@ const int ledPin = 2;
 long int DebounceTimer;
 int detekovano = false;
 /////////////displej///////////
+
+
+
 
 //////////////klavesnice////////////////////
 const byte radky = 4;
@@ -63,8 +68,10 @@ String processor(const String& var){
 //fuknce detekce, ktera se spusti pomoci preruseni
 void IRAM_ATTR detekce() {
   detekovano = true;
+  digitalWrite(ledPin, HIGH);
 }
- 
+
+
 void setup(){
   Serial.begin(115200);
   Wire.begin();
@@ -75,20 +82,29 @@ void setup(){
 
   attachInterrupt(cidloPin, detekce, RISING);
 
-
+  lcd.begin();  
+  lcd.backlight();
+  lcd.print("Wifi radio");
+  lcd.setCursor(0,1);
+  lcd.print("Evropa2");  
+  delay(2000); 
+  
   // Initialize SPIFFS
   if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
+
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
   }
+
   // Print ESP32 Local IP Address
   Serial.println(WiFi.localIP());
+
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", String(), false, processor);
@@ -98,10 +114,12 @@ void setup(){
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/style.css", "text/css");
   });
+
   //javascript
   server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/script.js", "text/css");
   });
+
   // Route to set GPIO to HIGH
   server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request){
     digitalWrite(ledPin, HIGH);    
@@ -113,6 +131,7 @@ void setup(){
     digitalWrite(ledPin, LOW);    
     request->send(SPIFFS, "/index.html", String(), false, processor);
   });
+
   server.begin();
 }
 
@@ -123,35 +142,26 @@ void mereniCasuOdSpusteni(){
   delay(1000);
 }
 
-int detekcePohybu(int pinCidlo, int pinLed){
-  int pohyb = digitalRead(pinCidlo);
-  int truOrFals;
-  if(pohyb){
-    //Serial.println("Pohyb detekovan!");
-    digitalWrite(pinLed, HIGH);
-    truOrFals = true;
-    return truOrFals;
-  }else{
-    //Serial.println("Nic nebylo detekovano."); 
-    digitalWrite(pinLed, LOW);
-    truOrFals = false;
-    return truOrFals;
-  }
+
+int kdyzDetekce(int ledka){
+  digitalWrite(ledka, HIGH);
+  delay(1000);
+  digitalWrite(ledka, LOW);
 }
 
 
 void loop(){
   //mereniCasuOdSpusteni();
-  /*int a;
-  if(detekcePohybu(cidloPin, ledPin) == true){
-    Serial.println("pohyb detekovan");
-    delay(1000);
-    a = 1;
-    if (a == 1 && klavesnice.getKey() == '#'){
-      digitalWrite(ledPin, LOW);
-    }
-  }else{
-    Serial.println("pohyb nebyl detekovan");
-    a = 0;
-  }*/
+  if(detekovano == true){
+    kdyzDetekce(ledPin);
+    Serial.println("Ble");
+    detekovano = false;
+  }
+  lcd.clear();// clear previous values from screen
+  lcd.print("Wifi radio");
+  lcd.setCursor(0,1);
+  lcd.print("Stanice:");
+  lcd.setCursor(12,1);  
+  lcd.print("test");
+  delay(2000); 
 }

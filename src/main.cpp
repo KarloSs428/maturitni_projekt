@@ -6,8 +6,6 @@
 #include "LiquidCrystal_I2C.h"
 #include "Wire.h"
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);
-
 //const char* ssid = "SitePark.cz-Demel_AP";
 //const char* password = "26894065";
 
@@ -23,7 +21,7 @@ long int DebounceTimer;
 int detekovano = false;
 /////////////displej///////////
 
-
+LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 
 //////////////klavesnice////////////////////
@@ -38,7 +36,7 @@ char keys[radky][sloupce] = {
 };
 
 byte pinyRadku[radky] = {12, 14, 27, 26};
-byte pinySloupcu[sloupce] = {25, 33, 32};
+byte pinySloupcu[sloupce] = {25, 33, 32, 35};
 
 Keypad klavesnice = Keypad( makeKeymap(keys), pinyRadku, pinySloupcu, radky, sloupce);
 //////////////////////////////////////////////////////
@@ -74,6 +72,7 @@ void IRAM_ATTR detekce() {
 
 void setup(){
   Serial.begin(115200);
+  lcd.begin(16,2);
   Wire.begin();
 
   pinMode(ledPin, OUTPUT);
@@ -82,12 +81,11 @@ void setup(){
 
   attachInterrupt(cidloPin, detekce, RISING);
 
-  lcd.begin();  
+  lcd.init();
   lcd.backlight();
-  lcd.print("Wifi radio");
-  lcd.setCursor(0,1);
-  lcd.print("Evropa2");  
-  delay(2000); 
+  lcd.setCursor(3,0);
+  lcd.print("Hello, world!");
+  delay(2000);
   
   // Initialize SPIFFS
   if(!SPIFFS.begin(true)){
@@ -157,11 +155,9 @@ void loop(){
     Serial.println("Ble");
     detekovano = false;
   }
-  lcd.clear();// clear previous values from screen
-  lcd.print("Wifi radio");
-  lcd.setCursor(0,1);
-  lcd.print("Stanice:");
-  lcd.setCursor(12,1);  
-  lcd.print("test");
-  delay(2000); 
+  char klavesa = klavesnice.getKey();
+  if (klavesa){
+    Serial.print("Stisknuta klavesa: ");
+    Serial.println(klavesa);
+  }
 }

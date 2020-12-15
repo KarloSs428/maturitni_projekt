@@ -6,11 +6,11 @@
 #include "LiquidCrystal_I2C.h"
 #include "Wire.h"
 
-//const char* ssid = "SitePark.cz-Demel_AP";
-//const char* password = "26894065";
+const char* ssid = "SitePark.cz-Demel_AP";
+const char* password = "26894065";
 
-const char* ssid = "SSPUOpava";
-const char* password = "";
+/*const char* ssid = "SSPUOpava";
+const char* password = "";*/
 
 const char* PARAM_INPUT_1 = "state";
 

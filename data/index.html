@@ -1,61 +1,19 @@
-<!--<!DOCTYPE html>
-<html>
-<head>
-  <title>ESP32 Web Server</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-
-<script>
-  var time = new Date();
-  console.log(time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds());
-  document.getElementById("cas").innerHTML = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
-</script>
-
-  <body>
-
-    <div class="topnav">
-      <a class="active" href="#home">Home</a>
-      <a href="#news">News</a>
-      <a href="#contact">Contact</a>
-      <a href="#about">About</a>
-    </div>
-
-    <p id="cas"></p>
-    <main class="container">
-      <h1>ESP32 Server</h1>
-      <label for="appt">Select a time:</label>
-      <input type="time" id="appt" name="appt">
-
-
-
-
-
-
-
-
-
-
-
-
-      <p>GPIO state: <strong> %STATE%</strong></p>
-      <p><a href="/on"><button class="button">ON</button></a></p>
-      <p><a href="/off"><button class="button button2">OFF</button></a></p>
-    </main>
-  </body>
-
-</html>-->
-<!--
 <!doctype html>
 <html lang="cs">
   <head>
     <title>ESP32 Web Server</title>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
+   <style>
+        .error {
+            border: 3px solid darkred;
+        }
+    </style>
   </head>
   <body>
 
@@ -74,48 +32,25 @@
 
     <main class="container">
 
-      <br>
-
-      <div class="row center justify-content-center">
-        <p id="aktualniCas"></p>
-      </div>
-
-      <div class="row">
-        <div class="form-group col-md-4">
-          <label for="den">Den</label>
-          <select class="browser-default custom-select" id="den">
-            <option value="pondeli">Pondělí</option>
-            <option value="utery">Úterý</option>
-            <option value="streda">Středa</option>
-            <option value="ctvrtek">Čtvrtek</option>
-            <option value="patek">Pátek</option>
-            <option value="sobota">Sobota</option>
-            <option value="nedele">Neděle</option>
-          </select>
+        <div class="container mt-3 mb-3">
+            <h2 class="text-center pb-3 mb-6 text-body" id="aktualniCas"></h2>
+            <form>
+                <div id="times">
+                    
+                </div>
+                <div id="error" class="alert alert-danger d-none">Formulář obsahuje neplatné údaje!</div>                    
+                <div class="form-group row">
+                    <div class="offset-sm-1 col-sm-2">
+                        <button type="button" class="btn btn-primary" id="append">Přidat nový čas</button>
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-success" id="send">Aktualizovat data</button>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="form-group col-md-4">
-          <label for="zapnuti">Čas zapnutí</label>
-          <input type="time" class="form-control" id="cas1">
-        </div>
-        <div class="form-group col-md-4">
-          <label for="vypnuti">Čas vypnutí</label>
-          <input type="time" class="form-control" id="cas2">
-        </div>
-      </div>
-
-      <div class="col-md-2 row">
-        <button type="button" class="btn btn-primary" id="send">Potvrdit</button>
-      </div>
-      
-      <hr>
-
-      <div class="row">
-        <p id="vypsanyCas"></p>
-      </div>
-
     </main>
-    
-    
+
 
     <style>
       footer {
@@ -128,7 +63,6 @@
         text-align: center;
       }
     </style>
-
     <footer>
       <br>
         <div class="row">
@@ -142,63 +76,8 @@
                 </div>
             </div>
         </div>
-        <div>
-          <span id="alert"></span>
-        </div>
     </footer>
 
-    <script src="script.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  </body>
-</html> -->
-
-
-!doctype html>
-<html lang="cs">
-  <head>
-    <title>AJAX</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <style>
-        .error {
-            border: 3px solid darkred;
-        }
-    </style>
-  </head>
-  <body>
-    <header class="jumbotron-fluid p-3 bg-danger">
-        <h1 class="display-3 text-center">jQuery &amp; AJAX</h1>
-    </header>  
-    <main>
-        <div class="container mt-3 mb-3">
-            <h2 class="text-center border-bottom pb-3 mb-5 text-danger">Ukázkový formulář</h2>
-            <form>
-                <div id="times">
-                    
-                </div>
-                <div id="error" class="alert alert-danger d-none">Formulář obsahuje neplatné údaje!</div>                    
-                <div class="form-group row">
-                    <div class="offset-sm-1 col-sm-2">
-                        <button type="button" class="btn btn-primary" id="append">Přidat nový čas</button>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="offset-sm-1 col-sm-2">
-                        <button type="button" class="btn btn-success" id="send">Aktualizovat data</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </main>
-    <footer class="container-fluid bg-light p-3 text-center">
-        <p>&copy; 2020 - SŠPU Opava</p>
-    </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>

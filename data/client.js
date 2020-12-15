@@ -1,63 +1,3 @@
-/*function potvrdit() {
-    var cas1 = 1;
-    var cas2 = 2;
-    document.getElementById('vypsanyCas').innerHTML = 'Alarm bude zapnutý od ' + cas1 + ' do ' + cas2 + '.';
-}
-
-function showTime() {
-    var date = new Date();
-    var h = date.getHours();
-    var m = date.getMinutes();
-    var s = date.getSeconds();
-    var session = "AM";
-
-    if (h == 0) {
-        h = 12;
-    }
-
-    if (h > 12) {
-        h = h - 12;
-        session = "PM";
-    }
-
-    h = (h < 10) ? "0" + h : h;
-    m = (m < 10) ? "0" + m : m;
-    s = (s < 10) ? "0" + s : s;
-
-    var time = h + ":" + m + ":" + s + " " + session;
-    document.getElementById("aktualniCas").innerText = time;
-    document.getElementById("aktualniCas").textContent = time;
-
-    setTimeout(showTime, 1000);
-
-}
-
-let casy = [];
-const pridejCas = (ev) => {
-    ev.preventDefault();  //to stop the form submitting
-    let cas = {
-        den: document.getElementById('den').value,
-        cas1: document.getElementById('cas1').value,
-        cas2: document.getElementById('cas2').value
-    }
-    casy.push(cas);
-    //document.querySelector('form').reset();
-
-    //for display purposes only
-    console.warn('added', { casy });
-
-    //saving to localStorage
-    localStorage.setItem('data', JSON.stringify(casy));
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('btn').addEventListener('click', pridejCas);
-});
-
-showTime();
-
-*/
-
 $(function(){
     /* Inicializace proměnné index, která unikátně identifikuje novou skupinu prvků */
     let index = 0;
@@ -65,19 +5,19 @@ $(function(){
     function addGroup(index = 0, obj = {start:'', stop:'', date:''}) {
         return `
         <div class="form-group row p-1 group-time" id="group-${index}">
-            <label class="col-sm-1">Start</label>
-            <div class="col-sm-2">
+            <label>Start</label>
+            <div class="col-sm-3">
                 <input type="time" class="form-control" required name="start" id="start-${index}" value="${obj.start}">
             </div>
-            <label class="col-sm-1">Stop</label>
-            <div class="col-sm-2">
+            <label>Stop</label>
+            <div class="col-sm-3">
                 <input type="time" class="form-control" required name="stop" id="stop-${index}" value="${obj.stop}">
             </div>
-            <label class="col-sm-1">Den</label>
+            <label>Den</label>
             <div class="col-sm-3">
                 <input type="date" class="form-control" required name="date" id="date-${index}" value="${obj.date}">
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
                 <button type="button" class="btn btn-danger delete" id="delete-${index}">Smazat</button>
             </div>
         </div>
@@ -207,7 +147,37 @@ $(function(){
         }
     });
 
+    function showTime() {
+        var date = new Date();
+        var h = date.getHours();
+        var m = date.getMinutes();
+        var s = date.getSeconds();
+        var session = "AM";
+        if (h == 0) {
+            h = 12;
+        }
+        if (h > 12) {
+            h = h - 12;
+            session = "PM";
+        }
+        h = (h < 10) ? "0" + h : h;
+        m = (m < 10) ? "0" + m : m;
+        s = (s < 10) ? "0" + s : s;
+        var time = h + ":" + m + ":" + s + " " + session;
+        document.getElementById("aktualniCas").innerText = time;
+        document.getElementById("aktualniCas").textContent = time;
+        setTimeout(showTime, 1000);
+    }
+
+    showTime();
+
     /* Načtení dat ze serveru */
     get();
 
 })
+
+
+
+
+
+

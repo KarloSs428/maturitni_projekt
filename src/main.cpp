@@ -114,8 +114,12 @@ void setup(){
   });
 
   //javascript
-  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/script.js", "text/css");
+  server.on("/client.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/client.js", "text/css");
+  });
+
+  server.on("/server.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/server.js", "text/css");
   });
 
   // Route to set GPIO to HIGH

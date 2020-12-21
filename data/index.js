@@ -30,8 +30,6 @@ function validateData(dataObject) {
     /* start - čas musí být ve správném formátu - 00:00 až 23:59 */
     start: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).required(),
     stop: Joi.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).required(),
-    /* date - platné datum, nanejvýš 31. 12. 2021, ve formátu yyyy-mm-dd */  
-    date: Joi.date().max('12-31-2021'),
   };
   return Joi.validate(dataObject, schema);
 }
@@ -72,9 +70,6 @@ function readJSON(pathToFile) {
 
 /* Request: použití metody GET, URL adresy /:
    Response: HTML stránka  */
-app.get("/", (req, res) => {
-  res.send("<h1>Úvodní stránka - REST API</h1>");
-});
 
 /* Načtení všech záznamů (data o všech časech)
    Request: použití metody GET, URL adresy /api/movies:
@@ -101,7 +96,6 @@ app.put("/api/times", (req, res) => {
       let time = {
         start: obj.start,
         stop: obj.stop,
-        date: obj.date,
       };
       /* Přidá nový časový záznam do pole */
       times.push(time);

@@ -2,23 +2,16 @@ $(function(){
     /* Inicializace proměnné index, která unikátně identifikuje novou skupinu prvků */
     let index = 0;
     /* Funkce, která přidá skupinu prvků do formuláře */
-    function addGroup(index = 0, obj = {start:'', stop:'', date:''}) {
+    function addGroup(index = 0, obj = {start:'', stop:''}) {
         return `
         <div class="form-group row p-1 group-time" id="group-${index}">
-            <label>Start</label>
-            <div class="col-sm-3">
+            <h3>Start</h3>
+            <div class="col-sm-5">
                 <input type="time" class="form-control" required name="start" id="start-${index}" value="${obj.start}">
             </div>
-            <label>Stop</label>
-            <div class="col-sm-3">
+            <h3>Stop</h3>
+            <div class="col-sm-5">
                 <input type="time" class="form-control" required name="stop" id="stop-${index}" value="${obj.stop}">
-            </div>
-            <label>Den</label>
-            <div class="col-sm-3">
-                <input type="date" class="form-control" required name="date" id="date-${index}" value="${obj.date}">
-            </div>
-            <div class="col-sm-3">
-                <button type="button" class="btn btn-danger delete" id="delete-${index}">Smazat</button>
             </div>
         </div>
         `;
@@ -29,11 +22,6 @@ $(function(){
         /* Přidá skupinu prvků jako nový blok do formuláře */
         $('#times').append(addGroup(index));
         /* Ošetření akce kliknutí na tlačítko Smazat - smaže se vybraná skupina prvků */
-        $('.delete').on('click', function() { 
-            /* Příklad traverzování - vyhledá se a odstraní celý element - 
-            předek tlačítka Smazat, který je oddílem s třídou group-time */
-            $(this).parents('div.group-time').remove();        
-        });   
         /* Index se po přidání prvku zvýší, aby se zajistila jeho unikátnost */ 
         index++;
     });
@@ -45,7 +33,7 @@ $(function(){
     function validateData(obj) {
         /* Z obou časových stringů odebere dvojtečku a porovná, zda je konečný údaj větší */
         /* Musí být zadáno také neprázdné datum */
-        return (obj.start.replace(':', '') < obj.stop.replace(':', '')) && obj.date; 
+        return (obj.start.replace(':', '') < obj.stop.replace(':', '')); 
     }
 
     function get() {
@@ -63,12 +51,7 @@ $(function(){
                 /* Prochází všechna data (pole objektů) */
                 data.forEach(obj => {
                     $('#times').append(addGroup(index, obj));
-                    /* Ošetření akce kliknutí na tlačítko Smazat - smaže se vybraná skupina prvků */
-                    $('.delete').on('click', function() { 
-                        /* Příklad traverzování - vyhledá se a odstraní celý element - 
-                        předek tlačítka Smazat, který je oddílem s třídou group-time */
-                        $(this).parents('div.group-time').remove();        
-                    });   
+                    /* Ošetření akce kliknutí na tlačítko Smazat - smaže se vybraná skupina prvků */ 
                     /* Index se po přidání prvku zvýší, aby se zajistila jeho unikátnost */ 
                     index++;
                 });                

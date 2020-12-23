@@ -5,41 +5,47 @@
 #include "Keypad.h"
 #include "LiquidCrystal_I2C.h"
 #include "Wire.h"
+#include "Tone32.h" //knihovna na bzucak, ktera z nejakeho duvodu prestala fungovat
 
-/*const char* ssid = "SitePark.cz-Demel_AP";
-const char* password = "26894065";*/
+#define trigger 13
+#define echo 2
 
+//udaje pro wifi ve skole
 /*const char* ssid = "SSPUOpava";
 const char* password = "";*/
 
-//udaje pro wifi
-const char *ssid = "vasek pasek";
-const char *password = "jsemborec123";
+//udaje pro wifi u me doma
+const char *wifiSsid = "vasek pasek";
+const char *wifiPassword = "jsemborec123";
 
-const int cidloPin = 13;
-const int ledPin = 2;
+long duration;
 
-int detekovano = false;
+int distance, initialDistance, currentDistance, i;
+int screenOffMsg = 0;
 
-bool aktivovano;
-bool alarmZapnuty;
+String hesloAlarm = "2369";
+String docasneHeslo;
 
-String hesloAlarm="1234";
-String tempPassword;
+boolean aktivovano = false; //stav alarmu
+boolean isActivated;
+boolean activateAlarm = false;
+boolean alarmActivated = false;
+boolean enteredPassword;
+boolean passChangeMode = false;
+boolean passChanged = false;
 
-///////////////////////////////
 /////////////DISPLEJ///////////
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-///////////////////////////////
 //////////////////////////////
 
-///////////////////////////////
 //////////KLAVESNICE///////////
 
 const byte radky = 4;
 const byte sloupce = 4;
+
+char klavesa;
 
 char keys[radky][sloupce] = {
     {'1', '2', '3', 'A'},
@@ -48,21 +54,14 @@ char keys[radky][sloupce] = {
     {'*', '0', '#', 'D'}};
 
 byte pinyRadku[radky] = {12, 14, 27, 26};
-byte pinySloupcu[sloupce] = {25, 33, 32, 35};
+byte pinySloupcu[sloupce] = {25, 33, 32, 4};
 
 Keypad klavesnice = Keypad(makeKeymap(keys), pinyRadku, pinySloupcu, radky, sloupce);
-///////////////////////////////
+
 //////////////////////////////
 
 //spusti se web server na portu 80
 AsyncWebServer server(80);
-
-//fuknce detekce, ktera se spusti pomoci preruseni
-void IRAM_ATTR detekce()
-{
-  detekovano = true;
-  digitalWrite(ledPin, HIGH);
-}
 
 void spifs()
 {
@@ -91,85 +90,93 @@ void spifsOvereni()
   }
 }
 
-
-//funkce, ktera se spusti, kdyz se aktivuje alarm
-void narusitel(int ledka)
+void zadejHeslo()
 {
-  char klavesa = klavesnice.getKey();
-  if (detekovano == true)
+  int k = 7;
+  docasneHeslo = "";
+  aktivovano = true;
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(" *** ALARM *** ");
+  lcd.setCursor(0, 1);
+  lcd.print("Heslo:");
+  while (aktivovano)
   {
-    digitalWrite(ledka, HIGH);
-    Serial.println("pohyb");
-    if (klavesa == '0')
+    klavesa = klavesnice.getKey();
+    if (klavesa != NO_KEY)
     {
-      digitalWrite(ledka, LOW);
-      detekovano = false;
-      aktivovano = false;
+      if (klavesa == '0' || klavesa == '1' || klavesa == '2' || klavesa == '3' ||
+          klavesa == '4' || klavesa == '5' || klavesa == '6' || klavesa == '7' ||
+          klavesa == '8' || klavesa == '9')
+      {
+        docasneHeslo += klavesa;
+        lcd.setCursor(k, 1);
+        lcd.print("*");
+        k++;
+      }
+    }
+    if (k > 11 || klavesa == '#')
+    {
+      docasneHeslo = "";
+      k = 5;
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print(" *** ALARM *** ");
+      lcd.setCursor(0, 1);
+      lcd.print("Heslo:");
+    }
+    if (klavesa == '*')
+    {
+      if (docasneHeslo == hesloAlarm)
+      {
+        aktivovano = false;
+        alarmActivated = false;
+        screenOffMsg = 0;
+      }
+      else if (docasneHeslo != hesloAlarm)
+      {
+        lcd.setCursor(0, 1);
+        lcd.print("zkus to znovu");
+        delay(2000);
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print(" *** ALARM *** ");
+        lcd.setCursor(0, 1);
+        lcd.print("Heslo:");
+      }
     }
   }
 }
 
-
-
-/*void enterPassword() {
-  int k=5;
-  tempPassword = "";
-  aktivovano = true;
-      while(aktivovano) {
-      keypressed = myKeypad.getKey();
-      if (keypressed != NO_KEY){
-        if (keypressed == '0' || keypressed == '1' || keypressed == '2' || keypressed == '3' ||
-            keypressed == '4' || keypressed == '5' || keypressed == '6' || keypressed == '7' ||
-            keypressed == '8' || keypressed == '9' ) {
-          tempPassword += keypressed;
-          lcd.setCursor(k,1);
-          lcd.print("*");
-          k++;
-        }
-      }
-      if (k > 9 || keypressed == '#') {
-        tempPassword = "";
-        k=5;
-        Serial.println("Zadej heslo: ");
-      }
-      if ( keypressed == '*') {
-        if ( tempPassword == hesloAlarm ) {
-          aktivovano = false;
-          detekovano = false;
-        }
-        else if (tempPassword != HesloAlarm) {
-          Serial.println("Zkus to znovu: ");
-          delay(2000);
-        }
-      }    
-    }
-}*/
+//funkce pro ziskani vzdalenosti pomoci ultrasonickeho senzoru
+long getDistance()
+{
+  digitalWrite(trigger, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigger, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigger, LOW);
+  duration = pulseIn(echo, HIGH);
+  distance = duration * 0.034 / 2;
+  return distance;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-
 
 void setup()
 {
   Serial.begin(115200);
   Wire.begin();
 
-  pinMode(ledPin, OUTPUT);
-  pinMode(cidloPin, INPUT_PULLDOWN);
-  pinMode(ledPin, OUTPUT);
-
-  attachInterrupt(cidloPin, detekce, RISING);
-
   //SPIFFS
   spifsOvereni();
   spifs();
 
-  //pripojeni
-  WiFi.begin(ssid, password);
+  //pripojeni k wifi
+  WiFi.begin(wifiSsid, wifiPassword);
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(1000);
@@ -180,7 +187,6 @@ void setup()
   Serial.println(WiFi.localIP());
   server.begin();
 
-
   lcd.init();
   lcd.backlight();
   lcd.setCursor(1, 0);
@@ -188,19 +194,158 @@ void setup()
   lcd.setCursor(1, 1);
   lcd.print("Karel Demel");
   delay(3000);
+
+  lcd.begin(16, 2);
+  lcd.backlight();
+  pinMode(trigger, OUTPUT); 
+  pinMode(echo, INPUT); 
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-
-
 
 void loop()
 {
-  narusitel(ledPin);
+  if (activateAlarm)
+  {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("alarm se ");
+    lcd.setCursor(0, 1);
+    lcd.print("spusti za ");
+
+    //odpocitavani do zapnuti alarmu
+    int countdown = 9;
+    while (countdown != 0)
+    {
+      lcd.setCursor(13, 1);
+      lcd.print(countdown);
+      countdown--;
+      delay(1000);
+    }
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("alarm aktivovan");
+    initialDistance = getDistance();
+    activateAlarm = false;
+    alarmActivated = true;
+  }
+
+  if (alarmActivated == true)
+  {
+    currentDistance = getDistance() + 10;
+    if (currentDistance < initialDistance)
+    {
+      lcd.clear();
+      zadejHeslo();
+    }
+  }
+
+  if (!alarmActivated)
+  {
+    if (screenOffMsg == 0)
+    {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("A - aktivace");
+      lcd.setCursor(0, 1);
+      lcd.print("B - zmena hesla");
+      screenOffMsg = 1;
+    }
+    klavesa = klavesnice.getKey();
+    //aktivace alarmu
+    if (klavesa == 'A')
+    {
+      activateAlarm = true;
+    }
+    //zmena hesla
+    else if (klavesa == 'B')
+    {
+      lcd.clear();
+      int i = 1;
+      docasneHeslo = "";
+      lcd.setCursor(0, 0);
+      lcd.print("soucasne heslo");
+      lcd.setCursor(0, 1);
+      lcd.print(">");
+      passChangeMode = true;
+      passChanged = true;
+      while (passChanged)
+      {
+        klavesa = klavesnice.getKey();
+        if (klavesa != NO_KEY)
+        {
+          if (klavesa == '0' || klavesa == '1' || klavesa == '2' || klavesa == '3' ||
+              klavesa == '4' || klavesa == '5' || klavesa == '6' || klavesa == '7' ||
+              klavesa == '8' || klavesa == '9')
+          {
+            docasneHeslo += klavesa;
+            lcd.setCursor(i, 1);
+            lcd.print("*");
+            i++;
+          }
+        }
+        if (i > 5 || klavesa == '#')
+        {
+          docasneHeslo = "";
+          i = 1;
+          lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("soucasne heslo");
+          lcd.setCursor(0, 1);
+          lcd.print(">");
+        }
+        if (klavesa == '*')
+        {
+          i = 1;
+          if (hesloAlarm == docasneHeslo)
+          {
+            docasneHeslo = "";
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("nove heslo");
+            lcd.setCursor(0, 1);
+            lcd.print(">");
+            while (passChangeMode)
+            {
+              klavesa = klavesnice.getKey();
+              if (klavesa != NO_KEY)
+              {
+                if (klavesa == '0' || klavesa == '1' || klavesa == '2' || klavesa == '3' ||
+                    klavesa == '4' || klavesa == '5' || klavesa == '6' || klavesa == '7' ||
+                    klavesa == '8' || klavesa == '9')
+                {
+                  docasneHeslo += klavesa;
+                  lcd.setCursor(i, 1);
+                  lcd.print("*");
+                  i++;
+                }
+              }
+              if (klavesa == '*')
+              {
+                i = 1;
+                hesloAlarm = docasneHeslo;
+                passChangeMode = false;
+                passChanged = false;
+                screenOffMsg = 0;
+              }
+              if (i > 5 || klavesa == '#')
+              {
+                docasneHeslo = "";
+                i = 1;
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                lcd.print("nove heslo");
+                lcd.setCursor(0, 1);
+                lcd.print(">");
+              }
+                        }
+          }
+        }
+      }
+    }
+  }
 }
